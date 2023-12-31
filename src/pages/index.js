@@ -445,7 +445,7 @@ export default function Home() {
 				const data = await expenses_received.records[i].data.json()
 				expenses_received_dataArr.push(data)
 				if (newMemberDid) {
-					// console.log(`RECEIVED EXPENSES TO ${newMemberDid}`)
+					console.log(`RECEIVED EXPENSES TO ${newMemberDid}`)
 					await expenses_received.records[i].send(newMemberDid)
 				}
 			}
@@ -457,7 +457,7 @@ export default function Home() {
 				const data = await expenses_sent.records[i].data.json()
 				expenses_sent_dataArr.push(data)
 				if (newMemberDid) {
-					// console.log(`SEND EXPENSES TO ${newMemberDid}`)
+					console.log(`SEND EXPENSES TO ${newMemberDid}`)
 					await expenses_sent.records[i].send(newMemberDid)
 				}
 			}
