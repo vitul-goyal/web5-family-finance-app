@@ -1,0 +1,28 @@
+{
+	"family": {
+		name: "The Smiths",
+		members: {
+			id: "did",
+			name: "name",
+			"isAdmin": 0/1
+		}
+	},
+	"expense": [
+		{
+			title,
+			date,
+			writerID,
+			amount,
+			category
+		}
+	],
+	"requests": [
+		{
+			id,
+			name,
+			request_date,
+			isApproved,
+			approve_date
+		}
+	]
+}
