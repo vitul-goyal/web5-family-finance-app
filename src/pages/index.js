@@ -439,26 +439,32 @@ export default function Home() {
 			})
 
 			console.log("EXPENSES RECEIVED: ", expenses_received.records.length)
-			let expenses_received_dataArr = []
+			let expenses_received_dataArr = [], savedExpensesIDs = []
 			for (let i = 0; i < expenses_received.records.length; i++) {
 				console.log("RECEIVED ID: ", expenses_received.records[i]._recordId)
 				const data = await expenses_received.records[i].data.json()
-				expenses_received_dataArr.push(data)
-				if (newMemberDid) {
-					console.log(`RECEIVED EXPENSES TO ${newMemberDid}`)
-					await expenses_received.records[i].send(newMemberDid)
+				if (!savedExpensesIDs.includes(expenses_received.records[i]._recordId)) {
+					expenses_received_dataArr.push(data)
+					savedExpensesIDs.push(expenses_received.records[i]._recordId)
+					if (newMemberDid) {
+						console.log(`RECEIVED EXPENSES TO ${newMemberDid}`)
+						await expenses_received.records[i].send(newMemberDid)
+					}
 				}
 			}
 
 			console.log("EXPENSES SENT: ", expenses_sent.records.length)
 			let expenses_sent_dataArr = []
 			for (let i = 0; i < expenses_sent.records.length; i++) {
-				console.log("SENT ID: ", expenses_received.records[i]._recordId)
+				console.log("SENT ID: ", expenses_sent.records[i]._recordId)
 				const data = await expenses_sent.records[i].data.json()
-				expenses_sent_dataArr.push(data)
-				if (newMemberDid) {
-					console.log(`SEND EXPENSES TO ${newMemberDid}`)
-					await expenses_sent.records[i].send(newMemberDid)
+				if (!savedExpensesIDs.includes(expenses_sent.records[i]._recordId)) {
+					expenses_sent_dataArr.push(data)
+					savedExpensesIDs.push(expenses_sent.records[i]._recordId)
+					if (newMemberDid) {
+						console.log(`SEND EXPENSES TO ${newMemberDid}`)
+						await expenses_sent.records[i].send(newMemberDid)
+					}
 				}
 			}
 
