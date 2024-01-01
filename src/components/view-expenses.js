@@ -76,13 +76,14 @@ function ViewExpenses(props) {
 				<input readOnly type="text" value={familyID} />
 				&nbsp;&nbsp;
 				<button onClick={copyFamilyID} className="btn">Copy</button>
-				<button type="submit" onClick={removeAllMessages} className="btn btn-danger">Delete data</button>
+				{/* <button type="submit" onClick={removeAllMessages} className="btn btn-danger">Delete data</button> */}
 			</p>
 			{isAdmin ?
-				<button onClick={viewRequestsSubmit} className="btn btn-primary">View New Requests {pendingRequests}</button>
+				<>
+					<button onClick={viewRequestsSubmit} className="btn btn-primary">View New Requests {pendingRequests}</button>&nbsp;&nbsp;&nbsp;
+				</>
 				: ""
 			}
-			&nbsp;&nbsp;&nbsp;
 			<button type="submit" onClick={addExpenseSubmit} className="btn btn-primary">Add Expense</button>
 
 			<p>&nbsp;</p>
