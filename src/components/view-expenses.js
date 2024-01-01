@@ -14,7 +14,7 @@ function ViewExpenses(props) {
 		if (familyMembers[i].id == myDid) {
 			myName = familyMembers[i].name
 		}
-		if (familyMembers[i].isAdmin) {
+		if (!familyMembers[i].isAdmin) {
 			familyID = familyMembers[i].id
 		}
 	}
