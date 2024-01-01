@@ -28,7 +28,6 @@ export default function Home() {
 	// Expense management
 	const [addExpense, setAddExpense] = useState(null);
 	const [allExpenses, setAllExpenses] = useState([]);
-	const [expensesArrToPrint, saveExpensesToArr] = useState([]);
 
 	const protocolDefinition = protocolJson()
 	useEffect(() => {
@@ -454,7 +453,6 @@ export default function Home() {
 				}
 			}
 
-			saveExpensesToArr(expenses_received_dataArr)
 			let expenses_sent_dataArr = []
 			for (let i = 0; i < expenses_sent.records.length; i++) {
 				const data = await expenses_sent.records[i].data.json()
@@ -511,7 +509,7 @@ export default function Home() {
 			}
 			else {
 				return (
-					<ViewExpenses expensesArrToPrint={expensesArrToPrint} removeAllMessages={removeAllMessages} familyRequests={familyRequests} familyName={familyName} familyMembers={familyMembers} myDid={did} onViewRequestsSubmit={viewRequests} onAddExpenseSubmit={addNewExpense} allExpenses={allExpenses} />
+					<ViewExpenses removeAllMessages={removeAllMessages} familyRequests={familyRequests} familyName={familyName} familyMembers={familyMembers} myDid={did} onViewRequestsSubmit={viewRequests} onAddExpenseSubmit={addNewExpense} allExpenses={allExpenses} />
 				)
 			}
 		}

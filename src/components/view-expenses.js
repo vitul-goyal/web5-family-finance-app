@@ -8,8 +8,6 @@ function ViewExpenses(props) {
 	const familyRequests = props.familyRequests
 	const allExpenses = props.allExpenses
 	let isAdmin = false
-	const expensesArrToPrint = props.expensesArrToPrint
-
 
 	let myName, familyID
 	for (let i = 0; i < familyMembers.length; i++) {
@@ -71,7 +69,7 @@ function ViewExpenses(props) {
 	return (
 		<div className="container">
 			<p>&nbsp;</p>
-			<h1>Welcome, {JSON.stringify(expensesArrToPrint)}</h1>
+			<h1>Welcome, {myName}</h1>
 			<p>
 				<strong>Family ID:</strong>
 				&nbsp;&nbsp;
