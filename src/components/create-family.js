@@ -1,20 +1,22 @@
 // Purpose: To create a new family group or join an existing family group
 function FamilyForm(props) {
 	const createNewFamilySubmit = async (e) => {
-		e.preventDefault();
+		e.preventDefault()
 		props.onNewFamilySubmit(e.target.form.familyName.value, e.target.form.adminName.value)
 	};
 	const joinFamilySubmit = async (e) => {
-		e.preventDefault();
+		e.preventDefault()
 		props.onJoinFamilySubmit(e.target.form.familyId.value, e.target.form.personName.value)
+	};
+	const removeAllMessages = async (e) => {
+		e.preventDefault()
+		props.removeAllMessages()
 	};
 
 	let familyRequestedMsg = ""
 	if (props.familyRequested) {
 		familyRequestedMsg = `Request sent. Please wait for admin approval.`
 	}
-
-	let did = props.did
 
 	return (
 		<div className="container">
@@ -32,7 +34,6 @@ function FamilyForm(props) {
 					<input type="text" className="form-control" id="adminName" placeholder="Enter Admin Name" />
 				</div>
 				<button type="submit" onClick={createNewFamilySubmit} className="btn btn-primary">Create</button>
-				<p><input type="text" value={did} /></p>
 			</form>
 			<p>&nbsp;</p>
 			<h2>-- OR --</h2>
@@ -49,6 +50,8 @@ function FamilyForm(props) {
 					<input type="text" className="form-control" id="personName" placeholder="Enter Person Name" />
 				</div>
 				<button type="submit" onClick={joinFamilySubmit} className="btn btn-primary">Request</button>
+				&nbsp;&nbsp;
+				<button type="submit" onClick={removeAllMessages} className="btn btn-danger">Delete data</button>
 				<p>{familyRequestedMsg}</p>
 			</form>
 		</div>

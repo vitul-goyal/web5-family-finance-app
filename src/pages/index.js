@@ -42,7 +42,6 @@ export default function Home() {
 				await installProtocol(web5, did, protocolDefinition)
 				await checkIfFamily(web5, did, protocolDefinition)
 			}
-			// removeAllMessages(web5, did, protocolDefinition)
 		};
 		initWeb5();
 	}, []);
@@ -88,7 +87,7 @@ export default function Home() {
 		}
 	}
 
-	const removeAllMessages = async (web5, did, protocolDefinition) => {
+	const removeAllMessages = async () => {
 		const response = await web5.dwn.records.query({
 			message: {
 				filter: {
@@ -125,6 +124,8 @@ export default function Home() {
 			console.log(r)
 		}
 		console.log("Removed")
+		// Refresh the page
+		location.reload();
 	}
 
 
@@ -167,7 +168,6 @@ export default function Home() {
 			if (familyFound) {
 				setFamilyName(data.familyName)
 				setFamilyMembers(data.members)
-				console.log(data.members)
 				setFamilyFound(1)
 				await fetchAllExpense(web5, did, data.members)
 			}
@@ -487,7 +487,7 @@ export default function Home() {
 	}
 	if (isFamily == 2) {
 		return (
-			<FamilyForm did={did} familyRequested={familyRequested} onNewFamilySubmit={createNewFamily} onJoinFamilySubmit={requestFamilyAddition} />
+			<FamilyForm removeAllMessages={removeAllMessages} familyRequested={familyRequested} onNewFamilySubmit={createNewFamily} onJoinFamilySubmit={requestFamilyAddition} />
 		)
 	}
 	if (isFamily == 1) {
@@ -504,7 +504,7 @@ export default function Home() {
 			}
 			else {
 				return (
-					<ViewExpenses familyRequests={familyRequests} familyName={familyName} familyMembers={familyMembers} myDid={did} onViewRequestsSubmit={viewRequests} onAddExpenseSubmit={addNewExpense} allExpenses={allExpenses} />
+					<ViewExpenses removeAllMessages={removeAllMessages} familyRequests={familyRequests} familyName={familyName} familyMembers={familyMembers} myDid={did} onViewRequestsSubmit={viewRequests} onAddExpenseSubmit={addNewExpense} allExpenses={allExpenses} />
 				)
 			}
 		}

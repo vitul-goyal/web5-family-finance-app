@@ -14,7 +14,7 @@ function ViewExpenses(props) {
 		if (familyMembers[i].id == myDid) {
 			myName = familyMembers[i].name
 		}
-		if (!familyMembers[i].isAdmin) {
+		if (familyMembers[i].isAdmin) {
 			familyID = familyMembers[i].id
 		}
 	}
@@ -46,6 +46,10 @@ function ViewExpenses(props) {
 		e.preventDefault();
 		props.onAddExpenseSubmit()
 	};
+	const removeAllMessages = async (e) => {
+		e.preventDefault()
+		props.removeAllMessages()
+	};
 
 	let rows = []
 	let totalAmt = 0
@@ -72,6 +76,7 @@ function ViewExpenses(props) {
 				<input readOnly type="text" value={familyID} />
 				&nbsp;&nbsp;
 				<button onClick={copyFamilyID} className="btn">Copy</button>
+				<button type="submit" onClick={removeAllMessages} className="btn btn-danger">Delete data</button>
 			</p>
 			{isAdmin ?
 				<button onClick={viewRequestsSubmit} className="btn btn-primary">View New Requests {pendingRequests}</button>
