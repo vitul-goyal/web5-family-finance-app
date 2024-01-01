@@ -28,6 +28,7 @@ export default function Home() {
 	// Expense management
 	const [addExpense, setAddExpense] = useState(null);
 	const [allExpenses, setAllExpenses] = useState([]);
+	const [expensesArrToPrint, saveExpensesToArr] = useState([]);
 
 	const protocolDefinition = protocolJson()
 	useEffect(() => {
@@ -442,25 +443,27 @@ export default function Home() {
 			let expenses_received_dataArr = [], savedExpensesIDs = []
 			for (let i = 0; i < expenses_received.records.length; i++) {
 				const data = await expenses_received.records[i].data.json()
-				console.log(data)
 				if (!savedExpensesIDs.includes(expenses_received.records[i]._recordId)) {
 					expenses_received_dataArr.push(data)
 					savedExpensesIDs.push(expenses_received.records[i]._recordId)
 					if (newMemberDid) {
+						console.log(data)
 						const { status } = await expenses_received.records[i].send(newMemberDid)
 						console.log(status)
 					}
 				}
 			}
 
+			saveExpensesToArr(expenses_received_dataArr)
+
 			let expenses_sent_dataArr = []
 			for (let i = 0; i < expenses_sent.records.length; i++) {
 				const data = await expenses_sent.records[i].data.json()
-				console.log(data)
 				if (!savedExpensesIDs.includes(expenses_sent.records[i]._recordId)) {
 					expenses_sent_dataArr.push(data)
 					savedExpensesIDs.push(expenses_sent.records[i]._recordId)
 					if (newMemberDid) {
+						console.log(data)
 						const { status } = await expenses_sent.records[i].send(newMemberDid)
 						console.log(status)
 					}
@@ -508,7 +511,7 @@ export default function Home() {
 			}
 			else {
 				return (
-					<ViewExpenses removeAllMessages={removeAllMessages} familyRequests={familyRequests} familyName={familyName} familyMembers={familyMembers} myDid={did} onViewRequestsSubmit={viewRequests} onAddExpenseSubmit={addNewExpense} allExpenses={allExpenses} />
+					<ViewExpenses expensesArrToPrint={expensesArrToPrint} removeAllMessages={removeAllMessages} familyRequests={familyRequests} familyName={familyName} familyMembers={familyMembers} myDid={did} onViewRequestsSubmit={viewRequests} onAddExpenseSubmit={addNewExpense} allExpenses={allExpenses} />
 				)
 			}
 		}

@@ -8,6 +8,8 @@ function ViewExpenses(props) {
 	const familyRequests = props.familyRequests
 	const allExpenses = props.allExpenses
 	let isAdmin = false
+	const expensesArrToPrint = props.expensesArrToPrint
+
 
 	let myName, familyID
 	for (let i = 0; i < familyMembers.length; i++) {
@@ -69,7 +71,7 @@ function ViewExpenses(props) {
 	return (
 		<div className="container">
 			<p>&nbsp;</p>
-			<h1>Welcome, {myName}</h1>
+			<h1>Welcome, {JSON.stringify(expensesArrToPrint)}</h1>
 			<p>
 				<strong>Family ID:</strong>
 				&nbsp;&nbsp;
@@ -87,9 +89,6 @@ function ViewExpenses(props) {
 			<button type="submit" onClick={addExpenseSubmit} className="btn btn-primary">Add Expense</button>
 
 			<p>&nbsp;</p>
-			<div className="form-group">
-				<label htmlFor="dateFilter">Date/Month filters can be added here. Family can also see the expenses for a particular category. Using AI, summary of expenses can be generated. Personal budgets can be added for different categories. Ability to add recurring expenses. Reminder for credit card, phone, internet, utilities bill.</label>
-			</div>
 			<table className="table">
 				<thead>
 					<tr>
@@ -107,6 +106,12 @@ function ViewExpenses(props) {
 					</tr>
 				</tfoot>
 			</table>
+
+			<p>&nbsp;</p>
+			<div className="form-group">
+				<label htmlFor="dateFilter">Date/Month filters can be added here. Family can also see the expenses for a particular category. Using AI, summary of expenses can be generated. Personal budgets can be added for different categories. Ability to add recurring expenses. Reminder for credit card, phone, internet, utilities bill.</label>
+			</div>
+
 		</div>
 	)
 }
