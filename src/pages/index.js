@@ -34,7 +34,6 @@ export default function Home() {
 		const initWeb5 = async () => {
 			console.log("Initializing Web5")
 			const { web5, did } = await Web5.connect()
-			/*
 			setWeb5(web5)
 			setDid(did)
 			setDefinition(protocolDefinition)
@@ -43,8 +42,7 @@ export default function Home() {
 				await installProtocol(web5, did, protocolDefinition)
 				await checkIfFamily(web5, did, protocolDefinition)
 			}
-			*/
-			removeAllMessages(web5, did, protocolDefinition)
+			// removeAllMessages(web5, did, protocolDefinition)
 		};
 		initWeb5();
 	}, []);
