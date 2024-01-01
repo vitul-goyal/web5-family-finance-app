@@ -290,7 +290,7 @@ export default function Home() {
 			for (let i = 0; i < members.length; i++) {
 				if (members[i].id != did) {
 					const { status } = await record.send(members[i].id)
-					console.log(status)
+					// console.log(status)
 				}
 			}
 
@@ -449,13 +449,12 @@ export default function Home() {
 					if (newMemberDid) {
 						console.log(data)
 						const { status } = await expenses_received.records[i].send(newMemberDid)
-						console.log(status)
+						console.log("Status of expenses received", status)
 					}
 				}
 			}
 
 			saveExpensesToArr(expenses_received_dataArr)
-
 			let expenses_sent_dataArr = []
 			for (let i = 0; i < expenses_sent.records.length; i++) {
 				const data = await expenses_sent.records[i].data.json()
@@ -463,9 +462,10 @@ export default function Home() {
 					expenses_sent_dataArr.push(data)
 					savedExpensesIDs.push(expenses_sent.records[i]._recordId)
 					if (newMemberDid) {
+						console.log({ newMemberDid })
 						console.log(data)
 						const { status } = await expenses_sent.records[i].send(newMemberDid)
-						console.log(status)
+						console.log("Status of expenses sent", status)
 					}
 				}
 			}
