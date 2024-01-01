@@ -442,6 +442,7 @@ export default function Home() {
 			let expenses_received_dataArr = [], savedExpensesIDs = []
 			for (let i = 0; i < expenses_received.records.length; i++) {
 				const data = await expenses_received.records[i].data.json()
+				console.log(data)
 				if (!savedExpensesIDs.includes(expenses_received.records[i]._recordId)) {
 					expenses_received_dataArr.push(data)
 					savedExpensesIDs.push(expenses_received.records[i]._recordId)
@@ -455,6 +456,7 @@ export default function Home() {
 			let expenses_sent_dataArr = []
 			for (let i = 0; i < expenses_sent.records.length; i++) {
 				const data = await expenses_sent.records[i].data.json()
+				console.log(data)
 				if (!savedExpensesIDs.includes(expenses_sent.records[i]._recordId)) {
 					expenses_sent_dataArr.push(data)
 					savedExpensesIDs.push(expenses_sent.records[i]._recordId)
