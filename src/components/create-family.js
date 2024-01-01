@@ -31,7 +31,7 @@ function FamilyForm(props) {
 				</div>
 				<div className="form-group">
 					<label htmlFor="adminName">My Name:</label>
-					<input type="text" className="form-control" id="adminName" placeholder="Enter Admin Name" />
+					<input type="text" className="form-control" id="adminName" placeholder="Enter Name" />
 				</div>
 				<button type="submit" onClick={createNewFamilySubmit} className="btn btn-primary">Create</button>
 			</form>
@@ -47,7 +47,7 @@ function FamilyForm(props) {
 				</div>
 				<div className="form-group">
 					<label htmlFor="personName">My Name:</label>
-					<input type="text" className="form-control" id="personName" placeholder="Enter Person Name" />
+					<input type="text" className="form-control" id="personName" placeholder="Enter Name" />
 				</div>
 				<button type="submit" onClick={joinFamilySubmit} className="btn btn-primary">Request</button>
 				&nbsp;&nbsp;

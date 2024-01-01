@@ -446,7 +446,8 @@ export default function Home() {
 					expenses_received_dataArr.push(data)
 					savedExpensesIDs.push(expenses_received.records[i]._recordId)
 					if (newMemberDid) {
-						await expenses_received.records[i].send(newMemberDid)
+						const { status } = await expenses_received.records[i].send(newMemberDid)
+						console.log(status)
 					}
 				}
 			}
@@ -458,7 +459,8 @@ export default function Home() {
 					expenses_sent_dataArr.push(data)
 					savedExpensesIDs.push(expenses_sent.records[i]._recordId)
 					if (newMemberDid) {
-						await expenses_sent.records[i].send(newMemberDid)
+						const { status } = await expenses_sent.records[i].send(newMemberDid)
+						console.log(status)
 					}
 				}
 			}
