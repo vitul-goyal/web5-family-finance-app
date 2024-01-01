@@ -182,10 +182,10 @@ export default function Home() {
 	}
 
 	// step 3: if no, create a new family
-	const createNewFamily = async (familyName, adminName) => {
-		if (web5 && familyName && adminName) {
+	const createNewFamily = async (adminName) => {
+		if (web5 && adminName) {
 			await saveMyFamilyTree(web5, {
-				familyName: familyName,
+				familyName: adminName,
 				members: [{
 					id: did,
 					name: adminName,

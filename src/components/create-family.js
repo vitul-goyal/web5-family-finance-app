@@ -2,7 +2,7 @@
 function FamilyForm(props) {
 	const createNewFamilySubmit = async (e) => {
 		e.preventDefault()
-		props.onNewFamilySubmit(e.target.form.familyName.value, e.target.form.adminName.value)
+		props.onNewFamilySubmit(e.target.form.adminName.value)
 	};
 	const joinFamilySubmit = async (e) => {
 		e.preventDefault()
@@ -25,10 +25,12 @@ function FamilyForm(props) {
 
 			{/* Form to ask for Name of family and name of Admin */}
 			<form>
+				{/*
 				<div className="form-group">
 					<label htmlFor="familyName">Family Name:</label>
 					<input type="text" className="form-control" id="familyName" placeholder="Enter Family Name" />
 				</div>
+				*/}
 				<div className="form-group">
 					<label htmlFor="adminName">My Name:</label>
 					<input type="text" className="form-control" id="adminName" placeholder="Enter Name" />
