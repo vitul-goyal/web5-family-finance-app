@@ -34,8 +34,8 @@ export default function Home() {
 		const initWeb5 = async () => {
 			console.log("Initializing Web5")
 			const { web5, did } = await Web5.connect()
-			setWeb5(web5)
 			setDid(did)
+			setWeb5(web5)
 			setDefinition(protocolDefinition)
 
 			if (web5 && did) {
@@ -167,6 +167,7 @@ export default function Home() {
 			if (familyFound) {
 				setFamilyName(data.familyName)
 				setFamilyMembers(data.members)
+				console.log(data.members)
 				setFamilyFound(1)
 				await fetchAllExpense(web5, did, data.members)
 			}
@@ -486,7 +487,7 @@ export default function Home() {
 	}
 	if (isFamily == 2) {
 		return (
-			<FamilyForm familyRequested={familyRequested} onNewFamilySubmit={createNewFamily} onJoinFamilySubmit={requestFamilyAddition} />
+			<FamilyForm did={did} familyRequested={familyRequested} onNewFamilySubmit={createNewFamily} onJoinFamilySubmit={requestFamilyAddition} />
 		)
 	}
 	if (isFamily == 1) {

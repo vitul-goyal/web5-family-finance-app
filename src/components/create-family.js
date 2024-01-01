@@ -14,6 +14,8 @@ function FamilyForm(props) {
 		familyRequestedMsg = `Request sent. Please wait for admin approval.`
 	}
 
+	let did = props.did
+
 	return (
 		<div className="container">
 			<p>&nbsp;</p>
@@ -30,6 +32,7 @@ function FamilyForm(props) {
 					<input type="text" className="form-control" id="adminName" placeholder="Enter Admin Name" />
 				</div>
 				<button type="submit" onClick={createNewFamilySubmit} className="btn btn-primary">Create</button>
+				<p><input type="text" value={did} /></p>
 			</form>
 			<p>&nbsp;</p>
 			<h2>-- OR --</h2>
