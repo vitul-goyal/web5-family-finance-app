@@ -420,7 +420,7 @@ export default function Home() {
 
 	// step 7: fetch all expenses
 	const fetchAllExpense = async (web5, did, familyMembers, newMemberDid = 0) => {
-		if (web5) {
+		if (web5 && protocolDef) {
 			const expenses_received = await web5.dwn.records.query({
 				from: did,
 				message: {
@@ -430,6 +430,24 @@ export default function Home() {
 					},
 				},
 			})
+			let savedExpensesIDs = []
+			for (let i = 0; i < expenses_received.records.length; i++) {
+				const record = expenses_received.records[i]
+				const data = await record.data.json()
+				if (!savedExpensesIDs.includes(record._recordId)) {
+					savedExpensesIDs.push(record._recordId)
+					await web5.dwn.records.write({
+						data,
+						message: {
+							protocol: protocolDef.protocol,
+							protocolPath: "expense",
+							schema: protocolDef.types.expense.schema
+						}
+					})
+					await removeFromFamily(record._recordId)
+				}
+			}
+
 			const expenses_sent = await web5.dwn.records.query({
 				message: {
 					filter: {
@@ -439,49 +457,27 @@ export default function Home() {
 				},
 			})
 
-			let expenses_received_dataArr = [], savedExpensesIDs = []
-			for (let i = 0; i < expenses_received.records.length; i++) {
-				const data = await expenses_received.records[i].data.json()
-				if (!savedExpensesIDs.includes(expenses_received.records[i]._recordId)) {
-					expenses_received_dataArr.push(data)
-					savedExpensesIDs.push(expenses_received.records[i]._recordId)
-					if (newMemberDid) {
-						console.log(data)
-						const { status } = await expenses_received.records[i].send(newMemberDid)
-						console.log("Status of expenses received", status)
-					}
-				}
-			}
-
 			let expenses_sent_dataArr = []
 			for (let i = 0; i < expenses_sent.records.length; i++) {
-				const data = await expenses_sent.records[i].data.json()
-				if (!savedExpensesIDs.includes(expenses_sent.records[i]._recordId)) {
-					expenses_sent_dataArr.push(data)
-					savedExpensesIDs.push(expenses_sent.records[i]._recordId)
-					if (newMemberDid) {
-						console.log({ newMemberDid })
-						console.log(data)
-						const { status } = await expenses_sent.records[i].send(newMemberDid)
-						console.log("Status of expenses sent", status)
-					}
+				const record = expenses_sent.records[i]
+				const data = await record.data.json()
+				expenses_sent_dataArr.push(data)
+				if (newMemberDid) {
+					const { status } = await record.send(newMemberDid)
 				}
 			}
+			expenses_sent_dataArr.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-			const allExpensesArr = [...expenses_received_dataArr, ...expenses_sent_dataArr];
-			allExpensesArr.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-
-			// loop allExpensesArr and add writer name from familyMembers by matching id
-			for (let i = 0; i < allExpensesArr.length; i++) {
+			// loop expenses_sent_dataArr and add writer name from familyMembers by matching id
+			for (let i = 0; i < expenses_sent_dataArr.length; i++) {
 				for (let j = 0; j < familyMembers.length; j++) {
-					if (allExpensesArr[i].writerID == familyMembers[j].id) {
-						allExpensesArr[i].writerName = familyMembers[j].name
+					if (expenses_sent_dataArr[i].writerID == familyMembers[j].id) {
+						expenses_sent_dataArr[i].writerName = familyMembers[j].name
 					}
 				}
 			}
 
-			setAllExpenses(allExpensesArr)
+			setAllExpenses(expenses_sent_dataArr)
 		}
 	}
 
