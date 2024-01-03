@@ -80,7 +80,7 @@ function ViewExpenses(props) {
 			</p>
 			{isAdmin ?
 				<>
-					<button onClick={viewRequestsSubmit} className="btn btn-primary">View New Requests {pendingRequests}</button>&nbsp;&nbsp;&nbsp;
+					<button onClick={viewRequestsSubmit} className="btn btn-primary">View Requests ({pendingRequests})</button>&nbsp;&nbsp;&nbsp;
 				</>
 				: ""
 			}
