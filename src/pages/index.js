@@ -305,7 +305,8 @@ export default function Home() {
 				recordId: id,
 			},
 		});
-		// console.log(response)
+		console.log(response)
+		return response.status
 	}
 
 	const saveMyFamilyTree = async (web5, data) => {
@@ -436,15 +437,21 @@ export default function Home() {
 				const data = await record.data.json()
 				if (!savedExpensesIDs.includes(record._recordId)) {
 					savedExpensesIDs.push(record._recordId)
-					await web5.dwn.records.write({
-						data,
-						message: {
-							protocol: protocolDef.protocol,
-							protocolPath: "expense",
-							schema: protocolDef.types.expense.schema
-						}
-					})
-					await removeFromFamily(record._recordId)
+					const status = await removeFromFamily(record._recordId)
+					if (status == 200 || status == 204 || status == 202) {
+						console.log("REMOVED FROM FAMILY")
+						await web5.dwn.records.write({
+							data,
+							message: {
+								protocol: protocolDef.protocol,
+								protocolPath: "expense",
+								schema: protocolDef.types.expense.schema
+							}
+						})
+					}
+					else {
+						console.log("ERROR REMOVING FROM FAMILY")
+					}
 				}
 			}
 
@@ -461,6 +468,7 @@ export default function Home() {
 			for (let i = 0; i < expenses_sent.records.length; i++) {
 				const record = expenses_sent.records[i]
 				const data = await record.data.json()
+				data['_recordId'] = record._recordId
 				expenses_sent_dataArr.push(data)
 				if (newMemberDid) {
 					const { status } = await record.send(newMemberDid)
