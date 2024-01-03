@@ -6,6 +6,7 @@ import FamilyForm from '../components/create-family.js'
 import ViewExpenses from '../components/view-expenses.js'
 import ShowRequests from '../components/show-requests.js'
 import AddExpense from '../components/add-expense.js'
+import { v4 as uuidv4 } from 'uuid'
 
 export default function Home() {
 
@@ -393,12 +394,14 @@ export default function Home() {
 	}
 
 	const saveNewExpense = async (date, expenseType, expenseDetails, amount) => {
+		const uuid = uuidv4()
 		const expense = {
 			expenseDetails,
 			date,
 			writerID: did,
 			amount,
-			expenseType
+			expenseType,
+			uuid
 		}
 		const { record } = await web5.dwn.records.write({
 			data: expense,
@@ -422,6 +425,7 @@ export default function Home() {
 	// step 7: fetch all expenses
 	const fetchAllExpense = async (web5, did, familyMembers, newMemberDid = 0) => {
 		if (web5 && protocolDef) {
+
 			const expenses_received = await web5.dwn.records.query({
 				from: did,
 				message: {
@@ -431,29 +435,29 @@ export default function Home() {
 					},
 				},
 			})
-			let savedExpensesIDs = []
+
 			console.log("EXPENSES RECEIVED: ", expenses_received.records.length)
 			for (let i = 0; i < expenses_received.records.length; i++) {
 				const record = expenses_received.records[i]
+				await removeFromFamily(record._recordId)
+
 				const data = await record.data.json()
 				console.log(data)
-				if (!savedExpensesIDs.includes(record._recordId)) {
-					savedExpensesIDs.push(record._recordId)
-					const status = await removeFromFamily(record._recordId)
-					if (status == 200 || status == 204 || status == 202) {
-						console.log("REMOVED FROM FAMILY")
-						await web5.dwn.records.write({
-							data,
-							message: {
-								protocol: protocolDef.protocol,
-								protocolPath: "expense",
-								schema: protocolDef.types.expense.schema
-							}
-						})
+				let addThisExpense = 1
+				for (let j = 0; j < allExpenses.length; j++) {
+					if (allExpenses[j].uuid === data.uuid) {
+						addThisExpense = 0
 					}
-					else {
-						console.log("ERROR REMOVING FROM FAMILY")
-					}
+				}
+				if (addThisExpense) {
+					await web5.dwn.records.write({
+						data,
+						message: {
+							protocol: protocolDef.protocol,
+							protocolPath: "expense",
+							schema: protocolDef.types.expense.schema
+						}
+					})
 				}
 			}
 
@@ -466,28 +470,37 @@ export default function Home() {
 				},
 			})
 
-			let expenses_sent_dataArr = []
-			for (let i = 0; i < expenses_sent.records.length; i++) {
-				const record = expenses_sent.records[i]
-				const data = await record.data.json()
-				data['_recordId'] = record._recordId
-				expenses_sent_dataArr.push(data)
-				if (newMemberDid) {
-					const { status } = await record.send(newMemberDid)
-				}
-			}
-			expenses_sent_dataArr.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-			// loop expenses_sent_dataArr and add writer name from familyMembers by matching id
-			for (let i = 0; i < expenses_sent_dataArr.length; i++) {
-				for (let j = 0; j < familyMembers.length; j++) {
-					if (expenses_sent_dataArr[i].writerID == familyMembers[j].id) {
-						expenses_sent_dataArr[i].writerName = familyMembers[j].name
+			if (expenses_sent.records.length != allExpenses.length) {
+				let expenses_sent_dataArr = [], expenses_uuidArr = []
+				for (let i = 0; i < expenses_sent.records.length; i++) {
+					const record = expenses_sent.records[i]
+					const data = await record.data.json()
+					// add only if uuid not in expenses_uuidArr
+					if (!expenses_uuidArr.includes(data.uuid)) {
+						expenses_uuidArr.push(data.uuid)
+						expenses_sent_dataArr.push(data)
+						if (newMemberDid) {
+							await record.send(newMemberDid)
+						}
 					}
 				}
+				expenses_sent_dataArr.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+				// loop expenses_sent_dataArr and add writer name from familyMembers by matching id
+				for (let i = 0; i < expenses_sent_dataArr.length; i++) {
+					for (let j = 0; j < familyMembers.length; j++) {
+						if (expenses_sent_dataArr[i].writerID == familyMembers[j].id) {
+							expenses_sent_dataArr[i].writerName = familyMembers[j].name
+						}
+					}
+				}
+
+				setAllExpenses(expenses_sent_dataArr)
+			}
+			else {
+				console.log("NO NEW EXPENSES")
 			}
 
-			setAllExpenses(expenses_sent_dataArr)
 		}
 	}
 
