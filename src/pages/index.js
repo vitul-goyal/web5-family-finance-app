@@ -444,6 +444,7 @@ export default function Home() {
 				const data = await record.data.json()
 				console.log(data)
 				let addThisExpense = 1
+				console.log("ALL EXPENSES: ", allExpenses)
 				for (let j = 0; j < allExpenses.length; j++) {
 					if (allExpenses[j].uuid === data.uuid) {
 						addThisExpense = 0
@@ -473,6 +474,8 @@ export default function Home() {
 				},
 			})
 
+			console.log("EXPENSES SENT: ", expenses_sent.records.length)
+			console.log("ALL EXPENSES: ", allExpenses.length)
 			if (expenses_sent.records.length != allExpenses.length) {
 				let expenses_sent_dataArr = [], expenses_uuidArr = []
 				for (let i = 0; i < expenses_sent.records.length; i++) {
