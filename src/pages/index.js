@@ -306,7 +306,7 @@ export default function Home() {
 			},
 		});
 		console.log(response)
-		return response.status
+		return response.status.code
 	}
 
 	const saveMyFamilyTree = async (web5, data) => {
