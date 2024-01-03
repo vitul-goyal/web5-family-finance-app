@@ -10,7 +10,7 @@ export default function ShowRequestTbody(props) {
 			<tr>
 				<td>
 					<h4>{data.expenseDetails}</h4>
-					<p>By: {data._recordId} under <strong>{data.expenseType}</strong></p>
+					<p>By: {data.writerName} under <strong>{data.expenseType}</strong></p>
 				</td>
 				<td>
 					<strong>$ {formattedAmt}</strong>
