@@ -436,6 +436,7 @@ export default function Home() {
 			for (let i = 0; i < expenses_received.records.length; i++) {
 				const record = expenses_received.records[i]
 				const data = await record.data.json()
+				console.log(data)
 				if (!savedExpensesIDs.includes(record._recordId)) {
 					savedExpensesIDs.push(record._recordId)
 					const status = await removeFromFamily(record._recordId)
