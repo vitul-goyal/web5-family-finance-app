@@ -459,6 +459,9 @@ export default function Home() {
 						}
 					})
 				}
+				else {
+					console.log("EXPENSE ALREADY ADDED")
+				}
 			}
 
 			const expenses_sent = await web5.dwn.records.query({
