@@ -432,6 +432,7 @@ export default function Home() {
 				},
 			})
 			let savedExpensesIDs = []
+			console.log("EXPENSES RECEIVED: ", expenses_received.records.length)
 			for (let i = 0; i < expenses_received.records.length; i++) {
 				const record = expenses_received.records[i]
 				const data = await record.data.json()
