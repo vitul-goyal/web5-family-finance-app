@@ -30,6 +30,7 @@ export default function Home() {
 	const [expensesAdditionRequested, setExpensesAdditionRequested] = useState(false);
 	const [addExpense, setAddExpense] = useState(null);
 	const [allExpenses, setAllExpenses] = useState([]);
+	const [deletionInProgress, setDeletionInProgress] = useState(false);
 
 	const protocolDefinition = protocolJson()
 	useEffect(() => {
@@ -51,21 +52,25 @@ export default function Home() {
 	useEffect(() => {
 		if (!web5 || !did) return;
 		const intervalId = setInterval(async () => {
-			if (isFamily == 2) {
-				// waiting to be added to family or if already added to family, then check if new member is added.
-				await checkIfAddedToFamily(web5, did, protocolDef)
-			}
-			if (isFamily == 1 && isAdmin == 1) {
-				await checkForNewRequests(web5, did);
+			console.log({ deletionInProgress })
+			if (!deletionInProgress) {
+				if (isFamily == 2) {
+					// waiting to be added to family or if already added to family, then check if new member is added.
+					await checkIfAddedToFamily(web5, did, protocolDef)
+				}
+				if (isFamily == 1 && isAdmin == 1) {
+					await checkForNewRequests(web5, did);
+				}
 			}
 		}, 2000);
 		return () => clearInterval(intervalId);
-	}, [web5, did, isFamily, protocolDef]);
+	}, [web5, did, isFamily, protocolDef, deletionInProgress]);
 
 	useEffect(() => {
 		if (!web5 || !did) return;
 		const intervalId = setInterval(async () => {
-			if (isFamily == 1) {
+			console.log({ deletionInProgress })
+			if (isFamily == 1 && !deletionInProgress) {
 				await fetchAllExpense(web5, did, familyMembers, 0, allExpenses);
 				if (!isAdmin) {
 					await checkIfAddedToFamily(web5, did, protocolDef);
@@ -73,7 +78,7 @@ export default function Home() {
 			}
 		}, 5000);
 		return () => clearInterval(intervalId);
-	}, [web5, did, isFamily, familyMembers, protocolDef, allExpenses]);
+	}, [web5, did, isFamily, familyMembers, protocolDef, allExpenses, deletionInProgress]);
 
 	// install protocol
 	const installProtocol = async (web5, did, protocolDefinition) => {
@@ -90,6 +95,7 @@ export default function Home() {
 	}
 
 	const removeAllMessages = async () => {
+		setDeletionInProgress(true)
 		const response = await web5.dwn.records.query({
 			message: {
 				filter: {
