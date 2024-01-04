@@ -65,7 +65,7 @@ export default function Home() {
 		if (!web5 || !did) return;
 		const intervalId = setInterval(async () => {
 			if (isFamily == 1) {
-				await fetchAllExpense(web5, did, familyMembers, newMemberDid = 0, allExpenses);
+				await fetchAllExpense(web5, did, familyMembers, 0, allExpenses);
 				if (!isAdmin) {
 					await checkIfAddedToFamily(web5, did, protocolDef);
 				}
