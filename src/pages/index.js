@@ -216,9 +216,10 @@ export default function Home() {
 				familyID: familyID
 			}
 		})
-		// console.log("SENDING REQUEST FOR ADDITION TO FAMILY")
+		console.log("SENDING REQUEST FOR ADDITION TO FAMILY")
 		const status = await record.send(familyID)
-		if (status.code == 200 || status.code == 201 || status.code == 202 || status.code == 203 || status.code == 204) {
+		console.log(status.status)
+		if (status.status.code == 202) {
 			setFamilyRequested(true)
 		}
 	}

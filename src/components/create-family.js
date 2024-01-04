@@ -14,11 +14,10 @@ function FamilyForm(props) {
 	};
 
 	let familyRequestedMsg = ""
-	if (props.familyRequested) {
+	const familyRequested = props.familyRequested
+	if (familyRequested) {
 		familyRequestedMsg = `Request sent. Please wait for admin approval.`
 	}
-
-	const familyRequested = props.familyRequested
 
 	return (
 		<div className="container">
