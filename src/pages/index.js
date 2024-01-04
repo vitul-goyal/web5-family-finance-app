@@ -10,8 +10,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 export default function Home() {
 
-	let allExpensesTemp = []
-
 	// initial
 	const [web5, setWeb5] = useState(null);
 	const [did, setDid] = useState(null);
@@ -67,14 +65,14 @@ export default function Home() {
 		if (!web5 || !did) return;
 		const intervalId = setInterval(async () => {
 			if (isFamily == 1) {
-				await fetchAllExpense(web5, did, familyMembers);
+				await fetchAllExpense(web5, did, familyMembers, newMemberDid = 0, allExpenses);
 				if (!isAdmin) {
 					await checkIfAddedToFamily(web5, did, protocolDef);
 				}
 			}
 		}, 5000);
 		return () => clearInterval(intervalId);
-	}, [web5, did, isFamily, familyMembers, protocolDef]);
+	}, [web5, did, isFamily, familyMembers, protocolDef, allExpenses]);
 
 	// install protocol
 	const installProtocol = async (web5, did, protocolDefinition) => {
@@ -425,7 +423,7 @@ export default function Home() {
 	}
 
 	// step 7: fetch all expenses
-	const fetchAllExpense = async (web5, did, familyMembers, newMemberDid = 0) => {
+	const fetchAllExpense = async (web5, did, familyMembers, newMemberDid = 0, allExpenses = []) => {
 		if (web5 && protocolDef) {
 
 			const expenses_received = await web5.dwn.records.query({
@@ -446,9 +444,9 @@ export default function Home() {
 				const data = await record.data.json()
 				console.log(data)
 				let addThisExpense = 1
-				console.log("ALL EXPENSES: ", allExpensesTemp)
-				for (let j = 0; j < allExpensesTemp.length; j++) {
-					if (allExpensesTemp[j].uuid === data.uuid) {
+				console.log("ALL EXPENSES: ", allExpenses)
+				for (let j = 0; j < allExpenses.length; j++) {
+					if (allExpenses[j].uuid === data.uuid) {
 						addThisExpense = 0
 					}
 				}
@@ -477,8 +475,8 @@ export default function Home() {
 			})
 
 			console.log("EXPENSES SENT: ", expenses_sent.records.length)
-			console.log("ALL EXPENSES: ", allExpensesTemp.length)
-			if (expenses_sent.records.length != allExpensesTemp.length) {
+			console.log("ALL EXPENSES: ", allExpenses.length)
+			if (expenses_sent.records.length != allExpenses.length) {
 				let expenses_sent_dataArr = [], expenses_uuidArr = []
 				for (let i = 0; i < expenses_sent.records.length; i++) {
 					const record = expenses_sent.records[i]
@@ -503,7 +501,6 @@ export default function Home() {
 					}
 				}
 
-				allExpensesTemp = allExpenses
 				setAllExpenses(expenses_sent_dataArr)
 			}
 			else {
