@@ -76,7 +76,6 @@ function ViewExpenses(props) {
 				<input readOnly type="text" value={familyID} />
 				&nbsp;&nbsp;
 				<button onClick={copyFamilyID} className="btn">Copy</button>
-				<button type="submit" onClick={removeAllMessages} className="btn btn-danger">Delete data</button>
 			</p>
 			{isAdmin ?
 				<>
@@ -104,6 +103,13 @@ function ViewExpenses(props) {
 					</tr>
 				</tfoot>
 			</table>
+
+			<p>&nbsp;</p>
+			<button type="submit" onClick={removeAllMessages} className="btn btn-danger">
+				{
+					isAdmin ? "Delete Group" : "Leave Group"
+				}
+			</button>
 
 			<p>&nbsp;</p>
 			<div className="form-group">

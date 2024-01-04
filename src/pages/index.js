@@ -52,7 +52,6 @@ export default function Home() {
 	useEffect(() => {
 		if (!web5 || !did) return;
 		const intervalId = setInterval(async () => {
-			console.log({ deletionInProgress })
 			if (!deletionInProgress) {
 				if (isFamily == 2) {
 					// waiting to be added to family or if already added to family, then check if new member is added.
@@ -69,7 +68,6 @@ export default function Home() {
 	useEffect(() => {
 		if (!web5 || !did) return;
 		const intervalId = setInterval(async () => {
-			console.log({ deletionInProgress })
 			if (isFamily == 1 && !deletionInProgress) {
 				await fetchAllExpense(web5, did, familyMembers, 0, allExpenses);
 				if (!isAdmin) {
@@ -94,7 +92,7 @@ export default function Home() {
 		}
 	}
 
-	const removeAllMessages = async () => {
+	const removeAllMessages = async (callAdmin = 1) => {
 		setDeletionInProgress(true)
 		const response = await web5.dwn.records.query({
 			message: {
@@ -131,9 +129,38 @@ export default function Home() {
 			});
 			console.log(r)
 		}
+
+		if (!isAdmin) {
+			if (familyMembers && did) {
+				// remove my membership from family and send to admin
+				// loop through family members and get my name and admin id
+				let adminID = null
+				let myName = null
+				for (let i = 0; i < familyMembers.length; i++) {
+					if (familyMembers[i].isAdmin) {
+						adminID = familyMembers[i].id
+					}
+					if (familyMembers[i].id == did) {
+						myName = familyMembers[i].name
+					}
+				}
+				if (adminID && myName && callAdmin) {
+					// send to admin
+					await requestFamilyAddition(adminID, myName, "remove")
+				}
+			}
+			else {
+				console.log("FAMILY NOT PRESENT")
+			}
+		}
+		else {
+			// remove admin from family tree and tell others
+			await removeUserFromTree(did)
+		}
+
 		console.log("Removed")
 		// Refresh the page
-		location.reload();
+		// location.reload();
 	}
 
 
@@ -205,7 +232,7 @@ export default function Home() {
 	}
 
 	// step 4: request members to the family
-	const requestFamilyAddition = async (familyID, memberName) => {
+	const requestFamilyAddition = async (familyID, memberName, type = "add") => {
 		const currentDate = new Date().toLocaleDateString();
 		const currentTime = new Date().toLocaleTimeString();
 		const { record } = await web5.dwn.records.write({
@@ -214,6 +241,7 @@ export default function Home() {
 				id: did,
 				name: memberName,
 				request_date: `${currentDate} ${currentTime}`,
+				type
 			},
 			message: {
 				protocol: protocolDef.protocol,
@@ -222,7 +250,8 @@ export default function Home() {
 				familyID: familyID
 			}
 		})
-		console.log("SENDING REQUEST FOR ADDITION TO FAMILY")
+
+		console.log("SENDING REQUEST FOR UPDATION TO FAMILY")
 		const status = await record.send(familyID)
 		console.log(status.status)
 		if (status.status.code == 202) {
@@ -247,9 +276,16 @@ export default function Home() {
 				const data = await response.records[i].data.json()
 				let addThisRequest = 1
 				for (let j = 0; j < familyMembers.length; j++) {
-					if (data.id == familyMembers[j].id) {
+					if (data.id == familyMembers[j].id || data.type == "remove") {
 						addThisRequest = 0
 					}
+				}
+				if (data.type == "remove") {
+					// remove the user request to be removed from family tree
+					console.log("REMOVE USER FROM FAMILY TREE: ", data.name)
+					console.log(response.records[i]._recordId)
+					await removeFromFamily(response.records[i]._recordId)
+					await removeUserFromTree(data.id)
 				}
 				if (addThisRequest) {
 					requests.push({
@@ -263,6 +299,43 @@ export default function Home() {
 			// console.log(requests)
 			setFamilyRequests(requests)
 		}
+	}
+
+	const removeUserFromTree = async (id) => {
+
+		console.log("familyMembers", familyMembers)
+		let members = familyMembers, memberFound = 0
+		for (let j = 0; j < members.length; j++) {
+			if (members[j].id == id) {
+				memberFound = 1
+				members.splice(j, 1)
+			}
+		}
+		setFamilyMembers(members)
+
+		console.log("members", members)
+		console.log({ memberFound })
+
+		if (memberFound) {
+
+			// member found in current family tree
+
+			// delete my existing family tree
+			await deleteMyfamilyTree()
+
+			// save updated tree with removed member
+			const record = await saveMyFamilyTree(web5, { familyName, members })
+
+			// loop through all family members and send them the updated family tree
+			for (let i = 0; i < members.length; i++) {
+				if (members[i].id != did) {
+					console.log("SEND UPDATED FAMILY TREE TO ", members[i].name)
+					const { status } = await record.send(members[i].id)
+					console.log(status)
+				}
+			}
+		}
+
 	}
 
 	// step 6: approve new member
@@ -374,21 +447,40 @@ export default function Home() {
 				const data = await response.records[0].data.json()
 				const recordId = response.records[0]._recordId
 
+				// check if admin is present in family. else delete the family tree
+				let adminIsPresent = 0
+				for (let i = 0; i < data.members.length; i++) {
+					// check if admin user is present
+					if (data.members[i].isAdmin) {
+						adminIsPresent = 1
+					}
+				}
+
+				console.log({ adminIsPresent })
+
 				// delete my existing family tree
 				console.log("DELETE FAMILY TREE")
 				await deleteMyfamilyTree()
-
-				// create new family tree
-				console.log("CREATE NEW FAMILY TREE")
-				await saveMyFamilyTree(web5, { familyName: data.familyName, members: data.members })
 
 				// remove received family request
 				console.log("REMOVE RECEIVED FAMILY REQUEST")
 				await removeFromFamily(recordId)
 
-				// refresh family check. this will refresh page and let the user enter the dashboard
-				console.log("REFRESH FAMILY CHECK")
-				await checkIfFamily(web5, myDid, protocolDefinition)
+				if (adminIsPresent) {
+					// create new family tree
+					console.log("CREATE NEW FAMILY TREE")
+					await saveMyFamilyTree(web5, { familyName: data.familyName, members: data.members })
+
+					// refresh family check. this will refresh page and let the user enter the dashboard
+					console.log("REFRESH FAMILY CHECK")
+					await checkIfFamily(web5, myDid, protocolDefinition)
+				}
+				else {
+					// admin is not present. delete my logs. also delete family members in my data
+					setFamilyMembers(null)
+					setFamilyFound(0)
+					await removeAllMessages(0)
+				}
 			}
 
 		}
@@ -500,14 +592,15 @@ export default function Home() {
 				console.log("ALL EXPENSES: ", allExpenses.length)
 			}
 
-			if (expenses_sent.records.length != allExpenses.length && expenses_sent.records.length > 0) {
+			if ((expenses_sent.records.length != allExpenses.length && expenses_sent.records.length > 0) || expenses_sent.records.length < allExpenses.length) {
 				let expenses_sent_dataArr = [], expenses_uuidArr = []
 				for (let i = 0; i < expenses_sent.records.length; i++) {
 					const record = expenses_sent.records[i]
-					const data = await record.data.json()
+					let data = await record.data.json()
 					// add only if uuid not in expenses_uuidArr
 					if (!expenses_uuidArr.includes(data.uuid)) {
 						expenses_uuidArr.push(data.uuid)
+						data.recordId = record._recordId
 						expenses_sent_dataArr.push(data)
 						if (newMemberDid) {
 							await record.send(newMemberDid)
@@ -518,10 +611,26 @@ export default function Home() {
 
 				// loop expenses_sent_dataArr and add writer name from familyMembers by matching id
 				for (let i = 0; i < expenses_sent_dataArr.length; i++) {
+					let userInFamily = 0
 					for (let j = 0; j < familyMembers.length; j++) {
 						if (expenses_sent_dataArr[i].writerID == familyMembers[j].id) {
 							expenses_sent_dataArr[i].writerName = familyMembers[j].name
+							userInFamily = 1
 						}
+					}
+
+					// if user is not in family, then remove the object from expenses_sent_dataArr
+					if (!userInFamily) {
+						console.log("Log not in family", expenses_sent_dataArr[i])
+						// remove from my dwm
+						await web5.dwn.records.delete({
+							message: {
+								recordId: expenses_sent_dataArr[i].recordId,
+							},
+						});
+
+						// remove from array
+						expenses_sent_dataArr.splice(i, 1)
 					}
 				}
 
