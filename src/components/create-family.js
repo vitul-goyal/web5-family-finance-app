@@ -18,6 +18,8 @@ function FamilyForm(props) {
 		familyRequestedMsg = `Request sent. Please wait for admin approval.`
 	}
 
+	const familyRequested = props.familyRequested
+
 	return (
 		<div className="container">
 			<p>&nbsp;</p>
@@ -51,9 +53,15 @@ function FamilyForm(props) {
 					<label htmlFor="personName">My Name:</label>
 					<input type="text" className="form-control" id="personName" placeholder="Enter Name" />
 				</div>
-				<button type="submit" onClick={joinFamilySubmit} className="btn btn-primary">Request</button>
-				&nbsp;&nbsp;
-				<button type="submit" onClick={removeAllMessages} className="btn btn-danger">Delete data</button>
+				{
+					!familyRequested ?
+						<>
+							<button type="submit" onClick={joinFamilySubmit} className="btn btn-primary">Request</button>
+							&nbsp;&nbsp;
+							<button type="submit" onClick={removeAllMessages} className="btn btn-danger">Delete data</button>
+						</>
+						: ""
+				}
 				<p>{familyRequestedMsg}</p>
 			</form>
 		</div>

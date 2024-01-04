@@ -22,11 +22,12 @@ export default function Home() {
 	const [familyMembers, setFamilyMembers] = useState(null);
 
 	// family requests
-	const [familyRequested, setFamilyRequested] = useState(null);
+	const [familyRequested, setFamilyRequested] = useState(false);
 	const [familyRequests, setFamilyRequests] = useState([]);
 	const [showRequests, setShowRequests] = useState(null);
 
 	// Expense management
+	const [expensesAdditionRequested, setExpensesAdditionRequested] = useState(false);
 	const [addExpense, setAddExpense] = useState(null);
 	const [allExpenses, setAllExpenses] = useState([]);
 
@@ -216,8 +217,10 @@ export default function Home() {
 			}
 		})
 		// console.log("SENDING REQUEST FOR ADDITION TO FAMILY")
-		await record.send(familyID)
-		setFamilyRequested(true)
+		const status = await record.send(familyID)
+		if (status.code == 200 || status.code == 201 || status.code == 202 || status.code == 203 || status.code == 204) {
+			setFamilyRequested(true)
+		}
 	}
 
 	const checkForNewRequests = async (web5, did) => {
@@ -391,6 +394,7 @@ export default function Home() {
 
 	const closeAddExpenseRequests = async () => {
 		setAddExpense(false)
+		setExpensesAdditionRequested(false)
 	}
 
 	const saveNewExpense = async (date, expenseType, expenseDetails, amount) => {
@@ -403,7 +407,7 @@ export default function Home() {
 			expenseType,
 			uuid
 		}
-		const { record } = await web5.dwn.records.write({
+		const { record, status } = await web5.dwn.records.write({
 			data: expense,
 			message: {
 				protocol: protocolDef.protocol,
@@ -411,6 +415,14 @@ export default function Home() {
 				schema: protocolDef.types.expense.schema
 			}
 		})
+
+		console.log(status)
+		if (record) {
+			console.log("SENDING REQUEST FOR ADDITION TO FAMILY")
+			// disable add expense button to avoid duplicacy
+			setExpensesAdditionRequested(true)
+		}
+
 		// loop through all family members and send them the expense
 		for (let i = 0; i < familyMembers.length; i++) {
 			if (familyMembers[i].id != did) {
@@ -481,7 +493,7 @@ export default function Home() {
 				console.log("ALL EXPENSES: ", allExpenses.length)
 			}
 
-			if (expenses_sent.records.length != allExpenses.length) {
+			if (expenses_sent.records.length != allExpenses.length && expenses_sent.records.length > 0) {
 				let expenses_sent_dataArr = [], expenses_uuidArr = []
 				for (let i = 0; i < expenses_sent.records.length; i++) {
 					const record = expenses_sent.records[i]
@@ -534,7 +546,7 @@ export default function Home() {
 		else {
 			if (addExpense) {
 				return (
-					<AddExpense closeRequests={closeAddExpenseRequests} saveNewExpense={saveNewExpense} />
+					<AddExpense expensesAdditionRequested={expensesAdditionRequested} closeRequests={closeAddExpenseRequests} saveNewExpense={saveNewExpense} />
 				)
 			}
 			else {

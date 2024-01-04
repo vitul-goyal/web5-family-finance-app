@@ -9,6 +9,10 @@ function AddExpense(props) {
 		props.saveNewExpense(e.target.form.date.value, e.target.form.expenseType.value, e.target.form.expenseDetails.value, e.target.form.amount.value)
 	}
 
+	// current date only
+	let today = new Date().toISOString().slice(0, 10);
+	const expensesAdditionRequested = props.expensesAdditionRequested
+
 	return (
 		<div className="container">
 			<p>&nbsp;</p>
@@ -18,7 +22,7 @@ function AddExpense(props) {
 			<form>
 				<div className="form-group">
 					<label htmlFor="date">Date:</label>
-					<input type="date" className="form-control" id="date" placeholder="Select date" />
+					<input type="date" className="form-control" id="date" placeholder="Select date" value={today} />
 				</div>
 
 				<div className="form-group">
@@ -48,8 +52,9 @@ function AddExpense(props) {
 					<label htmlFor="amount">Amount (in dollars):</label>
 					<input type="number" className="form-control" id="amount" placeholder="Enter amount" />
 				</div>
-
-				<button type="submit" onClick={saveNewExpense} className="btn btn-primary">Add Expense</button>
+				{
+					!expensesAdditionRequested ? <button type="submit" onClick={saveNewExpense} className="btn btn-primary">Add Expense</button> : ""
+				}
 			</form>
 		</div>
 	)
