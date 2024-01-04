@@ -53,7 +53,7 @@ function AddExpense(props) {
 					<input type="number" className="form-control" id="amount" placeholder="Enter amount" />
 				</div>
 				{
-					!expensesAdditionRequested ? <button type="submit" onClick={saveNewExpense} className="btn btn-primary">Add Expense</button> : ""
+					!expensesAdditionRequested ? <button type="submit" onClick={saveNewExpense} className="btn btn-primary">Add Expense</button> : <p>Please wait...</p>
 				}
 			</form>
 		</div>
