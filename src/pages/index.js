@@ -436,7 +436,9 @@ export default function Home() {
 				},
 			})
 
-			console.log("EXPENSES RECEIVED: ", expenses_received.records.length)
+			if (expenses_received.records.length > 0) {
+				console.log("EXPENSES RECEIVED: ", expenses_received.records.length)
+			}
 			for (let i = 0; i < expenses_received.records.length; i++) {
 				const record = expenses_received.records[i]
 				await removeFromFamily(record._recordId)
@@ -474,8 +476,11 @@ export default function Home() {
 				},
 			})
 
-			console.log("EXPENSES SENT: ", expenses_sent.records.length)
-			console.log("ALL EXPENSES: ", allExpenses.length)
+			if (expenses_sent.records.length != allExpenses.length) {
+				console.log("EXPENSES SENT: ", expenses_sent.records.length)
+				console.log("ALL EXPENSES: ", allExpenses.length)
+			}
+
 			if (expenses_sent.records.length != allExpenses.length) {
 				let expenses_sent_dataArr = [], expenses_uuidArr = []
 				for (let i = 0; i < expenses_sent.records.length; i++) {
