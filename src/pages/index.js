@@ -160,7 +160,7 @@ export default function Home() {
 
 		console.log("Removed")
 		// Refresh the page
-		// location.reload();
+		location.reload();
 	}
 
 
@@ -333,6 +333,9 @@ export default function Home() {
 					const { status } = await record.send(members[i].id)
 					console.log(status)
 				}
+			}
+			if (web5 && did && members) {
+				await fetchAllExpense(web5, did, members, newMemberDid = 0, allExpenses = [])
 			}
 		}
 
@@ -592,7 +595,7 @@ export default function Home() {
 				console.log("ALL EXPENSES: ", allExpenses.length)
 			}
 
-			if ((expenses_sent.records.length != allExpenses.length && expenses_sent.records.length > 0) || expenses_sent.records.length < allExpenses.length) {
+			if (expenses_sent.records.length != allExpenses.length && expenses_sent.records.length > 0) {
 				let expenses_sent_dataArr = [], expenses_uuidArr = []
 				for (let i = 0; i < expenses_sent.records.length; i++) {
 					const record = expenses_sent.records[i]
