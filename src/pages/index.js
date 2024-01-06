@@ -335,7 +335,7 @@ export default function Home() {
 				}
 			}
 			if (web5 && did && members) {
-				await fetchAllExpense(web5, did, members, newMemberDid = 0, allExpenses = [])
+				await fetchAllExpense(web5, did, members, 0, [])
 			}
 		}
 
