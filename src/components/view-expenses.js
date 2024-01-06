@@ -115,6 +115,8 @@ function ViewExpenses(props) {
 			<div className="form-group">
 				<h3>
 					<strong>Future Scope:</strong>
+				</h3>
+				<p>
 					<ul>
 						<li>List of family members</li>
 						<li>Member wise expenses</li>
@@ -124,7 +126,7 @@ function ViewExpenses(props) {
 						<li>Ability to add recurring expenses</li>
 						<li>Set member wise monthly budgets</li>
 					</ul>
-				</h3>
+				</p>
 			</div>
 
 		</div>
