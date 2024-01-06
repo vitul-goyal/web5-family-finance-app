@@ -104,16 +104,27 @@ function ViewExpenses(props) {
 				</tfoot>
 			</table>
 
-			<p>&nbsp;</p>
+			{/* <p>&nbsp;</p>
 			<button type="submit" onClick={removeAllMessages} className="btn btn-danger">
 				{
 					isAdmin ? "Delete Group" : "Leave Group"
 				}
-			</button>
+			</button> */}
 
 			<p>&nbsp;</p>
 			<div className="form-group">
-				<label htmlFor="dateFilter">Date/Month filters can be added here. Family can also see the expenses for a particular category. Using AI, summary of expenses can be generated. Personal budgets can be added for different categories. Ability to add recurring expenses. Reminder for credit card, phone, internet, utilities bill.</label>
+				<h3>
+					<strong>Future Scope:</strong>
+					<ul>
+						<li>List of family members</li>
+						<li>Member wise expenses</li>
+						<li>Date/Month filters</li>
+						<li>Category wise expenses view</li>
+						<li>Summary of expenses using AI</li>
+						<li>Ability to add recurring expenses</li>
+						<li>Set member wise monthly budgets</li>
+					</ul>
+				</h3>
 			</div>
 
 		</div>

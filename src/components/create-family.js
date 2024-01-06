@@ -36,7 +36,7 @@ function FamilyForm(props) {
 					<label htmlFor="adminName">My Name:</label>
 					<input type="text" className="form-control" id="adminName" placeholder="Enter Name" />
 				</div>
-				<button type="submit" onClick={createNewFamilySubmit} className="btn btn-primary">Create</button>
+				<button type="submit" onClick={createNewFamilySubmit} className="btn btn-primary">Create Group</button>
 			</form>
 			<p>&nbsp;</p>
 			<h2>-- OR --</h2>
@@ -55,9 +55,9 @@ function FamilyForm(props) {
 				{
 					!familyRequested ?
 						<>
-							<button type="submit" onClick={joinFamilySubmit} className="btn btn-primary">Request</button>
-							&nbsp;&nbsp;
-							<button type="submit" onClick={removeAllMessages} className="btn btn-danger">Delete data</button>
+							<button type="submit" onClick={joinFamilySubmit} className="btn btn-primary">Request Access</button>
+							{/* &nbsp;&nbsp;
+							<button type="submit" onClick={removeAllMessages} className="btn btn-danger">Delete data</button> */}
 						</>
 						: ""
 				}
